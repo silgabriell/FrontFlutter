@@ -1,4 +1,3 @@
-import 'package:first_app/ajudar.dart';
 import 'package:first_app/beneficios.dart';
 import 'package:first_app/folha_pagamentos.dart';
 import 'package:first_app/info_funcionarios.dart';
@@ -38,14 +37,7 @@ void _onMinhasInformacoesButtonPressed(BuildContext context) {
   );
   }
 
-  void _onAjudaButtonPressed(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => Ajuda(funcionarioData: funcionarioData),
-    ),
-  );
-  }
+
 
   double calcularValorTotalAReceber(Map<String, dynamic> funcionario) {
     double salario = funcionario["salario"] ?? 0.0;
@@ -311,61 +303,6 @@ void _onMinhasInformacoesButtonPressed(BuildContext context) {
                                 color: Color(0xff212157),
                               ),
                             ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(0, 0, 0, 39),
-                      child: ElevatedButton(
-                        onPressed: () => _onAjudaButtonPressed(context),
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                        ),
-                        child: Container(
-                          constraints: const BoxConstraints(maxWidth: 300),
-                          height: 48.0,
-                          decoration: BoxDecoration(
-                            color: const Color(0xffe3e3ff),
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0x3f212157),
-                                offset: Offset(0, 4),
-                                blurRadius: 2,
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                margin:
-                                    const EdgeInsets.fromLTRB(100, 0.67, 50, 0),
-                                child: const Text(
-                                  'Ajuda',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontFamily: 'Quicksand',
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w700,
-                                    height: 1.25,
-                                    color: Color(0xff212157),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin:
-                                    const EdgeInsets.fromLTRB(0, 0, 0, 0.33),
-                                width: 25.33,
-                                height: 25.33,
-                                child: Image.asset(
-                                  'assets/images/ajuda-ic.png',
-                                  width: 25.33,
-                                  height: 25.33,
-                                ),
-                              ),
-                            ],
                           ),
                         ),
                       ),
