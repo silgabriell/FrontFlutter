@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
 
           for (var usuario in usuarios) {
             if (usuario['login'] == _usernameController.text.trim() &&
-                usuario['senhahash'] == _passwordController.text.trim()) {
+                usuario['login'] == _passwordController.text.trim()) {
               credenciaisValidas = true;
               codigoUsuario = usuario['codUsuario'];
               break;
@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
             print('nome: ${funcionario['nome']}');
             print('codigo_usuairio: ${funcionario['codUsuario']}');
 
-            if (funcionario['codUsuario'] == codigoUsuario + 1) {
+            if (funcionario['codUsuario'] == codigoUsuario) {
               funcionarioData = funcionario;
               break;
             }
