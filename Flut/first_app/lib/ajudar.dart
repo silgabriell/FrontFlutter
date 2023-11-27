@@ -1,15 +1,16 @@
 import 'package:first_app/confirmacao_ajuda.dart';
-import 'package:first_app/principal.dart';
+// import 'package:first_app/principal.dart';
 import 'package:flutter/material.dart';
 
 class Ajuda extends StatelessWidget {
-  const Ajuda({Key? key}) : super(key: key);
+    const Ajuda({Key? key, required this.funcionarioData}) : super(key: key);
+    final Map<String, dynamic>? funcionarioData;
 
-  void handleVoltarButtonPress(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const Principal()),
-    );
+
+  void _onVoltarButtonPressed(BuildContext context) {
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   void handleAnexarButtonPress() {}
@@ -71,7 +72,7 @@ class Ajuda extends StatelessWidget {
                               maxWidth: 111,
                             ),
                             child: const Text(
-                              'Pedro\nHermes Co.',
+                              'Hermes Co.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'Quicksand',
@@ -215,7 +216,7 @@ class Ajuda extends StatelessWidget {
                   Center(
                     child: ElevatedButton(
                       onPressed: () {
-                        handleVoltarButtonPress(context);
+                        _onVoltarButtonPressed(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFE3E3FF),

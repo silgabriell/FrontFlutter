@@ -1,10 +1,42 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 class Beneficio extends StatelessWidget {
-  const Beneficio({super.key});
+  final Map<String, dynamic>? funcionarioData;
+
+  const Beneficio({Key? key, required this.funcionarioData}) : super(key: key);
+
+  String proventos(Map<String, dynamic>? funcionarioData) {
+    return '${funcionarioData?['vale_refeicao']}/${funcionarioData?['vale_transporte']}/${funcionarioData?['vale_alimentacao']}';
+  }
+
+  String formatarDataAniversario() {
+    int dia = Random().nextInt(28) + 1;
+
+    List<String> meses = [
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+
+    String mes = meses[Random().nextInt(meses.length)];
+
+    return '$dia de $mes';
+  }
+
+    void _onVoltarButtonPressed(BuildContext context) {
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic>? funcionarioInfos = funcionarioData;
+    double planoDeSaude = funcionarioInfos != null ? funcionarioInfos['plano_DE_SAUDE'] : 0.00;
+    String beneficios = funcionarioInfos != null ? proventos(funcionarioInfos) : '';
+
+    String dataAniversario = formatarDataAniversario();
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -56,7 +88,7 @@ class Beneficio extends StatelessWidget {
                               maxWidth: 111,
                             ),
                             child: const Text(
-                              'Pedro\nHermes Co.',
+                              '\nHermes Co.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'Quicksand',
@@ -103,7 +135,7 @@ class Beneficio extends StatelessWidget {
                 ],
               ),
             ),
-            const Positioned(
+            Positioned(
               left: 0,
               top: 495,
               child: SizedBox(
@@ -119,7 +151,7 @@ class Beneficio extends StatelessWidget {
                         height: 96.79,
                         child: Stack(
                           children: [
-                            Positioned(
+                            const Positioned(
                               left: 7,
                               top: 0,
                               child: Text(
@@ -133,6 +165,20 @@ class Beneficio extends StatelessWidget {
                                 ),
                               ),
                             ),
+                          Positioned(
+                              left: 7,
+                              top: 30,
+                              child: Text(
+                                'Plano de Saúde: valor descontado: $planoDeSaude',
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                  fontFamily: 'Quicksand',
+                                  fontWeight: FontWeight.normal,
+                                  height: 0,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -141,7 +187,7 @@ class Beneficio extends StatelessWidget {
                 ),
               ),
             ),
-            const Positioned(
+            Positioned(
               left: 0,
               top: 380,
               child: SizedBox(
@@ -153,11 +199,11 @@ class Beneficio extends StatelessWidget {
                       left: 6,
                       top: 6.21,
                       child: SizedBox(
-                        width: 349,
+                        width: 530,
                         height: 96.79,
                         child: Stack(
                           children: [
-                            Positioned(
+                            const Positioned(
                               left: 7,
                               top: 0,
                               child: Text(
@@ -171,6 +217,20 @@ class Beneficio extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            Positioned(
+                              left: 7,
+                              top: 30,
+                              child: Text(
+                                'Valores: $beneficios',
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                  fontFamily: 'Quicksand',
+                                  fontWeight: FontWeight.normal,
+                                  height: 0,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -179,7 +239,7 @@ class Beneficio extends StatelessWidget {
                 ),
               ),
             ),
-            const Positioned(
+            Positioned(
               left: 0,
               top: 265,
               child: SizedBox(
@@ -195,7 +255,7 @@ class Beneficio extends StatelessWidget {
                         height: 96.79,
                         child: Stack(
                           children: [
-                            Positioned(
+                            const Positioned(
                               left: 7,
                               top: 0,
                               child: Text(
@@ -209,40 +269,16 @@ class Beneficio extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const Positioned(
-              left: 0,
-              top: 150,
-              child: SizedBox(
-                width: 360,
-                height: 110,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      left: 6,
-                      top: 6.21,
-                      child: SizedBox(
-                        width: 349,
-                        height: 96.79,
-                        child: Stack(
-                          children: [
                             Positioned(
                               left: 7,
-                              top: 0,
+                              top: 30,
                               child: Text(
-                                'Premiações:',
-                                style: TextStyle(
+                                'Aniversário: $dataAniversario',
+                                style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 15,
                                   fontFamily: 'Quicksand',
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.normal,
                                   height: 0,
                                 ),
                               ),
@@ -251,6 +287,40 @@ class Beneficio extends StatelessWidget {
                         ),
                       ),
                     ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              left: 0,
+              top: 150,
+              child: SizedBox(
+                width: 360,
+                height: 110,
+                child: Stack(
+                  children: [
+                    ElevatedButton(
+                    onPressed: () {
+                      _onVoltarButtonPressed(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xffe3e3ff),
+                      foregroundColor: const Color(0xff212157),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      minimumSize: const Size(300, 48),
+                      elevation: 2,
+                    ),
+                    child: const Text(
+                      'VOLTAR',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Quicksand',
+                        fontSize: 18,
+                      ),
+                    ), 
+                  ),
                   ],
                 ),
               ),

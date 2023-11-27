@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class FolhaPag extends StatelessWidget {
-  const FolhaPag({Key? key}) : super(key: key);
+  final Map<String, dynamic>? funcionarioData;
+  const FolhaPag({Key? key, required this.funcionarioData}) : super(key: key);
 
   void _onVoltarButtonPressed(BuildContext context) {
     if (Navigator.canPop(context)) {
@@ -9,8 +10,35 @@ class FolhaPag extends StatelessWidget {
     }
   }
 
+  double retornaValorLiquido(Map<String, dynamic> funcionario){
+    double inss = funcionario['inss'];
+    double salario = funcionario['salario'];
+    double planoSaude = funcionario['plano_DE_SAUDE'];
+    double vr = funcionario['vale_refeicao'];
+    double vt = funcionario['vale_transporte'];
+    double va = funcionario['vale_alimentacao'];
+
+    double descontoINSS = (salario * (inss / 100));
+
+    return (salario - descontoINSS) - planoSaude + vr + vt + va;
+
+  }
+
+  double retornaTotalDescontado(Map<String, dynamic> funcionario){
+    double inss = funcionario['inss'];
+    double salario = funcionario['salario'];
+
+    return(salario * (inss / 100));
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic>? funcionarioInfos = funcionarioData;
+    double totalLiquido = funcionarioInfos != null ? retornaValorLiquido(funcionarioInfos) : 0.0;
+    double valorDescontado = funcionarioInfos != null ? retornaTotalDescontado(funcionarioInfos): 0.0;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -67,7 +95,7 @@ class FolhaPag extends StatelessWidget {
                                 maxWidth: 111,
                               ),
                               child: const Text(
-                                'Pedro\nHermes Co.',
+                                '\nHermes Co.',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontFamily: 'Quicksand',
@@ -115,135 +143,98 @@ class FolhaPag extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.fromLTRB(0, 0, 0, 85),
+                margin: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 width: double.infinity,
-                height: 365,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0x3f000000),
-                      offset: Offset(0, 4),
-                      blurRadius: 2,
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding:
-                            const EdgeInsets.fromLTRB(25, 17.14, 14.17, 12.89),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: const Color(0xffefefef),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              margin:
-                                  const EdgeInsets.fromLTRB(0, 0, 220.17, 0.75),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Center(
-                                    child: Container(
-                                      margin: const EdgeInsets.fromLTRB(
-                                          0, 0, 0, 4.5),
-                                      child: const Text(
-                                        '03/2023',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontFamily: 'Quicksand',
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w700,
-                                          height: 1.25,
-                                          color: Color(0xff000000),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const Center(
-                                    child: Text(
-                                      'Mensal:',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontFamily: 'Quicksand',
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w700,
-                                        height: 1.25,
-                                        color: Color(0xff000000),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              width: 39.67,
-                              height: 37.97,
-                              child: Image.asset(
-                                'assets/images/direita.png',
-                                width: 39.67,
-                                height: 37.97,
-                              ),
-                            ),
-                          ],
-                        ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Salário:',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(
-                        height: 5,
+                    ),
+                    Text(
+                      'R\$ ${funcionarioInfos?['salario']?.toStringAsFixed(2) ?? "0.00"}',
+                      style: const TextStyle(
+                        fontSize: 14,
                       ),
-                      Container(
-                        width: double.infinity,
-                        height: 68,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: const Color(0xffefefef),
-                        ),
+                    ),
+                    const SizedBox(height: 12.0),
+                    const Text(
+                      'Valor de Proventos:',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(
-                        height: 5,
+                    ),
+                    Text(
+                      'R\$ ${(funcionarioInfos?['vale_refeicao'] + funcionarioInfos?['vale_alimentacao'] + funcionarioInfos?['vale_transporte'])?.toStringAsFixed(2) ?? "0.00"}',
+                      style: const TextStyle(
+                        fontSize: 14,
                       ),
-                      Container(
-                        width: double.infinity,
-                        height: 68,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: const Color(0xffefefef),
-                        ),
+                    ),
+                    const SizedBox(height: 12.0),
+                    const Text(
+                      'Valor Descontos:',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(
-                        height: 5,
+                    ),
+                    Text(
+                      'R\$ ${valorDescontado.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 14,
                       ),
-                      Container(
-                        width: double.infinity,
-                        height: 68,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: const Color(0xffefefef),
-                        ),
+                    ),
+                    const SizedBox(height: 12.0),
+                    const Text(
+                      'Valor Líquido:',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(
-                        height: 5,
+                    ),
+                    Text(
+                      'R\$ ${totalLiquido.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 14,
                       ),
-                      Container(
-                        width: double.infinity,
-                        height: 68,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: const Color(0xffefefef),
-                        ),
+                    ),
+                    const SizedBox(height: 12.0),
+
+                    const Text(
+                      'Taxas: ',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(
-                        height: 5,
+                    ),
+
+                    Text(
+                      'INSS: ${funcionarioInfos?['inss']?.toStringAsFixed(2) ?? "0.00"}%',
+                      style: const TextStyle(
+                        fontSize: 14,
                       ),
-                    ],
-                  ),
+                    ),
+
+                    // Adicione informações adicionais aqui, se necessário
+                  ],
                 ),
               ),
               const SizedBox(height: 0),
@@ -270,7 +261,7 @@ class FolhaPag extends StatelessWidget {
                         fontFamily: 'Quicksand',
                         fontSize: 18,
                       ),
-                    ),
+                    ), 
                   ),
                   // Adicione botões adicionais aqui, se necessário
                 ],

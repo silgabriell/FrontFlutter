@@ -7,36 +7,55 @@ import 'package:first_app/tela_de_sair.dart';
 import 'package:flutter/material.dart';
 
 class Principal extends StatelessWidget {
-  const Principal({super.key});
+  const Principal({Key? key, required this.funcionarioData}) : super(key: key);
+  final Map<String, dynamic> ? funcionarioData; 
 
-  void _onMinhasInformacoesButtonPressed(BuildContext context) {
-    // Navegue para a tela MinhasInfo quando o botão for pressionado
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const MinhasInf()),
-    );
-  }
+void _onMinhasInformacoesButtonPressed(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => MinhasInf(funcionarioData: funcionarioData),
+    ),
+  );
+}
+
 
   void _onFolhaDePagamentoButtonPressed(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const FolhaPag()),
-    );
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => FolhaPag(funcionarioData: funcionarioData),
+    ),
+  );
   }
 
   void _onBeneficiosButtonPressed(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const Beneficio()),
-    );
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => Beneficio(funcionarioData: funcionarioData),
+    ),
+  );
   }
 
   void _onAjudaButtonPressed(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const Ajuda()),
-    );
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => Ajuda(funcionarioData: funcionarioData),
+    ),
+  );
   }
+
+  double calcularValorTotalAReceber(Map<String, dynamic> funcionario) {
+    double salario = funcionario["salario"] ?? 0.0;
+    double valeRefeicao = funcionario["vale_refeicao"] ?? 0.0;
+    double valeTransporte = funcionario["vale_transporte"] ?? 0.0;
+
+    double valorTotalAReceber = salario + valeRefeicao + valeTransporte;
+    return valorTotalAReceber;
+  }
+  
 
   void _onSairButtonPressed(BuildContext context) {
     // Coloque a ação desejada aqui
@@ -45,6 +64,7 @@ class Principal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  double valorTotalAReceber = calcularValorTotalAReceber(funcionarioData!);
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -80,7 +100,7 @@ class Principal extends StatelessWidget {
                           maxWidth: 111,
                         ),
                         child: const Text(
-                          'Pedro\nHermes Co.',
+                          '\nHermes Co.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'Quicksand',
@@ -127,10 +147,10 @@ class Principal extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const Text(
-                            ' R\$ 1.509,81',
+                         Text(
+                            ' R\$ ${valorTotalAReceber.toStringAsFixed(2)}',
                             textAlign: TextAlign.right,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontFamily: 'Quicksand',
                               fontSize: 18,
                               fontWeight: FontWeight.w700,

@@ -9,14 +9,14 @@ class AjudaEnviadoDialog {
   static void _enviadoPress(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const Ajuda()),
+      MaterialPageRoute(builder: (context) => const Ajuda(funcionarioData: null)),
     );
   }
 
   static Future<void> _showDialog(BuildContext context) async {
     await showDialog<void>(
       context: context,
-      barrierDismissible: false, // Impede o fechamento clicando fora do diálogo
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.transparent,
@@ -50,10 +50,11 @@ class AjudaEnviadoDialog {
                         'O prazo para resposta é de 48 horas no e-mail cadastrado.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontFamily: 'Quicksand',
-                            fontSize: 18,
-                            height: 1,
-                            color: Colors.black),
+                          fontFamily: 'Quicksand',
+                          fontSize: 18,
+                          height: 1,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),

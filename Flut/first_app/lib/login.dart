@@ -1,23 +1,23 @@
-// ignore_for_file: library_private_types_in_public_api, avoid_print
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'package:first_app/esqueceu_senha.dart';
 import 'package:first_app/principal.dart';
 
 class LoginUser extends StatelessWidget {
-  const LoginUser({super.key});
+  const LoginUser({Key? key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: LoginPage(),
     );
   }
 }
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({Key? key});
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -27,80 +27,77 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
-  String _cpfErrorMessage = ''; // Mensagem de erro para CPF
+  String _cpfErrorMessage = '';
+  String _loginErrorMessage = ''; // Adiciona esta variável para armazenar a mensagem de erro de login
 
-  bool validarCPF(String cpf) {
-    // Remova caracteres não numéricos
-    cpf = cpf.replaceAll(RegExp(r'[^0-9]'), '');
-
-    // Verifica se o CPF tem 11 dígitos
-    if (cpf.length != 11) {
-      setState(() {
-        _cpfErrorMessage = 'CPF deve conter 11 dígitos.';
-      });
-      return false;
-    }
-
-    // Calcula o primeiro dígito verificador
-    int soma = 0;
-    for (int i = 0; i < 9; i++) {
-      soma += int.parse(cpf[i]) * (10 - i);
-    }
-    int primeiroDigito = 11 - (soma % 11);
-
-    // Se o primeiro dígito for maior ou igual a 10, considera 0
-    if (primeiroDigito >= 10) {
-      primeiroDigito = 0;
-    }
-
-    // Calcula o segundo dígito verificador
-    soma = 0;
-    for (int i = 0; i < 10; i++) {
-      soma += int.parse(cpf[i]) * (11 - i);
-    }
-    int segundoDigito = 11 - (soma % 11);
-
-    // Se o segundo dígito for maior ou igual a 10, considera 0
-    if (segundoDigito >= 10) {
-      segundoDigito = 0;
-    }
-
-    // Verifica se os dígitos verificadores são iguais aos dígitos reais
-    if (cpf[9] == primeiroDigito.toString() &&
-        cpf[10] == segundoDigito.toString()) {
-      setState(() {
-        _cpfErrorMessage = ''; // CPF válido, limpa a mensagem de erro
-      });
-      return true;
-    } else {
-      setState(() {
-        _cpfErrorMessage = 'CPF inválido. Verifique os dígitos.';
-      });
-      return false;
-    }
+  bool validarLogin(String login) {
+    // Você pode adicionar regras de validação específicas do login aqui
+    // Neste exemplo, estou permitindo qualquer coisa que não esteja vazia
+    return login.isNotEmpty;
   }
 
-  void _login() {
-    String cpf = _usernameController.text.trim();
-    if (cpf.isNotEmpty && cpf.length == 11 && validarCPF(cpf)) {
-      String username = _usernameController.text;
-      String password = _passwordController.text;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const Principal(),
-        ),
-      );
+  Future<void> _login(BuildContext context) async {
+    String login = _usernameController.text.trim();
+    if (login.isNotEmpty && validarLogin(login)) {
+      try {
+        final responseUser =
+            await http.get(Uri.parse('http://10.0.2.2:8080/usuarios/'));
+        final responseFunc =
+            await http.get(Uri.parse('http://10.0.2.2:8080/funcionario/'));
 
-      print('Username: $username');
-      print('Password: $password');
+        if (responseUser.statusCode == 200) {
+          List<dynamic> usuarios = json.decode(responseUser.body);
+          List<dynamic> funcionarios = json.decode(responseFunc.body);
+          bool credenciaisValidas = false;
+          Map<String, dynamic>? funcionarioData;
+
+          var codigoUsuario;
+
+          for (var usuario in usuarios) {
+            if (usuario['login'] == _usernameController.text.trim() &&
+                usuario['senhahash'] == _passwordController.text.trim()) {
+              credenciaisValidas = true;
+              codigoUsuario = usuario['codUsuario'];
+              break;
+            }
+          }
+
+          for (var funcionario in funcionarios) {
+            print('codigo_funcionario: ${funcionario['codigo_funcionario']}');
+            print('nome: ${funcionario['nome']}');
+            print('codigo_usuairio: ${funcionario['codUsuario']}');
+
+            if (funcionario['codUsuario'] == codigoUsuario + 1) {
+              funcionarioData = funcionario;
+              break;
+            }
+          }
+
+          if (credenciaisValidas && funcionarioData != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Principal(funcionarioData: funcionarioData),
+              ),
+            );
+          } else {
+            // Exibe uma mensagem de erro para credenciais inválidas
+            setState(() {
+              _loginErrorMessage = 'Credenciais inválidas';
+            });
+          }
+        } else {
+          print('Erro na solicitação: ${responseUser.statusCode}');
+        }
+      } catch (error) {
+        print('Erro na solicitação: $error');
+      }
     }
   }
 
   void _esqueceuSenhaPressed() {
-    EsqueceuSuaSenhaDialog dialog =
-        EsqueceuSuaSenhaDialog(); // Crie uma instância da classe
-    dialog.show(context); // Chame o método show na instância
+    EsqueceuSuaSenhaDialog dialog = EsqueceuSuaSenhaDialog();
+    dialog.show(context);
   }
 
   @override
@@ -145,11 +142,12 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 16.0),
                   TextField(
                     controller: _usernameController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    maxLength: 11,
+                    keyboardType: TextInputType.text, // Permitir letras e números
+                    // Remova o inputFormatters para permitir letras
+                    // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    // maxLength: 11, // Remova esta restrição
                     decoration: InputDecoration(
-                      labelText: 'CPF:',
+                      labelText: 'Login:', // Altere para 'Login'
                       labelStyle: const TextStyle(
                         fontSize: 20,
                         fontFamily: 'Quicksand',
@@ -158,8 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                       errorText:
                           _cpfErrorMessage.isNotEmpty ? _cpfErrorMessage : null,
                       errorStyle: const TextStyle(
-                        color: Colors
-                            .red, // Defina a cor vermelha para o erro aqui
+                        color: Colors.red,
                       ),
                     ),
                   ),
@@ -193,8 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed:
-                          _esqueceuSenhaPressed, // Chama a função ao clicar
+                      onPressed: _esqueceuSenhaPressed,
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
                       ),
@@ -211,7 +207,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 16.0),
                   ElevatedButton(
-                    onPressed: _login, // Chama a função ao clicar
+                    onPressed: () => _login(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 27, 28, 27),
                       foregroundColor: const Color(0xffdfae62),
@@ -229,6 +225,14 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
+                  if (_loginErrorMessage.isNotEmpty) // Exibe a mensagem de erro se houver uma
+                    Text(
+                      _loginErrorMessage,
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 16.0,
+                      ),
+                    ),
                 ],
               ),
             ),
