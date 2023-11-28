@@ -37,15 +37,9 @@ void _onMinhasInformacoesButtonPressed(BuildContext context) {
   );
   }
 
-
-
   double calcularValorTotalAReceber(Map<String, dynamic> funcionario) {
     double salario = funcionario["salario"] ?? 0.0;
-    double valeRefeicao = funcionario["vale_refeicao"] ?? 0.0;
-    double valeTransporte = funcionario["vale_transporte"] ?? 0.0;
-
-    double valorTotalAReceber = salario + valeRefeicao + valeTransporte;
-    return valorTotalAReceber;
+    return salario;
   }
   
 
@@ -129,7 +123,7 @@ void _onMinhasInformacoesButtonPressed(BuildContext context) {
                           Container(
                             margin: const EdgeInsets.fromLTRB(0, 0, 77, 0),
                             child: const Text(
-                              'Valor a receber:',
+                              '          Salário:',
                               style: TextStyle(
                                 fontFamily: 'Quicksand',
                                 fontSize: 18,

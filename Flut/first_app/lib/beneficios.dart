@@ -7,7 +7,7 @@ class Beneficio extends StatelessWidget {
   const Beneficio({Key? key, required this.funcionarioData}) : super(key: key);
 
   String proventos(Map<String, dynamic>? funcionarioData) {
-    return '${funcionarioData?['vale_refeicao']}/${funcionarioData?['vale_transporte']}/${funcionarioData?['vale_alimentacao']}';
+    return '${funcionarioData?['vale_refeicao']}/${funcionarioData?['vale_alimentacao']}/${funcionarioData?['vale_transporte']}/';
   }
 
   String formatarDataAniversario() {
@@ -222,58 +222,6 @@ class Beneficio extends StatelessWidget {
                               top: 30,
                               child: Text(
                                 'Valores: $beneficios',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                  fontFamily: 'Quicksand',
-                                  fontWeight: FontWeight.normal,
-                                  height: 0,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              left: 0,
-              top: 265,
-              child: SizedBox(
-                width: 360,
-                height: 110,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      left: 6,
-                      top: 6.21,
-                      child: SizedBox(
-                        width: 349,
-                        height: 96.79,
-                        child: Stack(
-                          children: [
-                            const Positioned(
-                              left: 7,
-                              top: 0,
-                              child: Text(
-                                'Day off:',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                  fontFamily: 'Quicksand',
-                                  fontWeight: FontWeight.w700,
-                                  height: 0,
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              left: 7,
-                              top: 30,
-                              child: Text(
-                                'Aniversário: $dataAniversario',
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 15,

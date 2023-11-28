@@ -22,6 +22,7 @@ class _FolhaPagState extends State<FolhaPag> {
   String faixaIRRf = "";
   String mensagem = "";
   String faixaIrf = "";
+  String fgtsMEs = "";
 
   @override
   void initState() {
@@ -58,14 +59,16 @@ class _FolhaPagState extends State<FolhaPag> {
         }
       }
 
-      salarioAtual = maiorFolhaFunc['salario'];
+      salarioAtual = maiorFolhaFunc?['salario'];
       valorProventos = maiorFolhaFunc['valor_proventos'];
       valorDesconto = maiorFolhaFunc['valor_descontos'];
       valorLiquido = maiorFolhaFunc['valor_liquido'];
       mensagem = maiorFolhaFunc['mensagem'];
       faixaIrf = maiorFolhaFunc['faixa_irrf'];
+      fgtsMEs = maiorFolhaFunc['fgtsmes'];
 
-      print(maiorFolhaFunc?['codFolha']);
+
+      // print(maiorFolhaFunc?['codFolha']);
     } catch (err) {
       print(err);
     }
@@ -237,7 +240,7 @@ class _FolhaPagState extends State<FolhaPag> {
                       ),
                     ),
                     Text(
-                      'R\$ $salarioAtual', // Usando a variável de estado
+                      salarioAtual,
                       style: const TextStyle(
                         fontSize: 15,
                       ),
@@ -295,12 +298,21 @@ class _FolhaPagState extends State<FolhaPag> {
                     ),
 
                     Text(
-                      'INSS: $faixaIrf',
+                      'IRRF: $faixaIrf',
                       style: const TextStyle(
                         fontSize: 14,
                         height: 2,
                       ),
                     ),
+
+                       Text(
+                      'FGTS: $fgtsMEs',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        height: 2,
+                      ),
+                    ),
+                    
 
                     const SizedBox(height: 15.0),
 
