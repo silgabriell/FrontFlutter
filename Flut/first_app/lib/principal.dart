@@ -153,38 +153,6 @@ void _onMinhasInformacoesButtonPressed(BuildContext context) {
                         ],
                       ),
                     ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                            child: const Text(
-                              'Previsão de pagamento:',
-                              style: TextStyle(
-                                fontFamily: 'Quicksand',
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                height: 1.25,
-                                color: Color.fromARGB(255, 255, 255, 255),
-                              ),
-                            ),
-                          ),
-                          const Text(
-                            '08/05/2023',
-                            textAlign: TextAlign.right,
-                            style: TextStyle(
-                              fontFamily: 'Quicksand',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              height: 1.25,
-                              color: Color.fromARGB(255, 255, 255, 255),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
