@@ -1,16 +1,79 @@
-import 'package:flutter/material.dart';
+import 'dart:math';
 
-class FolhaPag extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+class FolhaPag extends StatefulWidget {
   final Map<String, dynamic>? funcionarioData;
+
   const FolhaPag({Key? key, required this.funcionarioData}) : super(key: key);
 
-  void _onVoltarButtonPressed(BuildContext context) {
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    }
+  @override
+  _FolhaPagState createState() => _FolhaPagState();
+}
+
+class _FolhaPagState extends State<FolhaPag> {
+  late Map<String, dynamic>? funcionarioInfos;
+  String salarioAtual = "";
+  String valorProventos = "";
+  String valorDesconto = "";
+  String valorLiquido = "";
+  String faixaIRRf = "";
+  String mensagem = "";
+  String faixaIrf = "";
+
+  @override
+  void initState() {
+    super.initState();
+    // Chame a função fetchData no initState
+    fetchData();
   }
 
-  double retornaValorLiquido(Map<String, dynamic> funcionario){
+  Future<void> fetchData() async {
+    try {
+      final response =
+          await http.get(Uri.parse('http://10.0.2.2:8080/holerite/'));
+      List<dynamic> holerites = await json.decode(response.body);
+      List<dynamic> listaFolhasFuncionario = [];
+      Map<String, dynamic> folhaAtual;
+
+      for (var holerite in holerites) {
+        print('codFolha : ${holerite['codFolha']}');
+        print('cod_funcionario: ${holerite['cod_funcionario']}');
+        print('valor_proventos: ${holerite['valor_proventos']}');
+        print('valor_descontos: ${holerite['valor_descontos']}');
+        print('valor_liquido: ${holerite['valor_liquido']}');
+        print('mensagem: ${holerite['mensagem']}');
+        print('salario: ${holerite['salario']}');
+
+        if (holerite['cod_funcionario'] == funcionarioInfos?['codigo_funcionario']) {
+          listaFolhasFuncionario.add(holerite);
+        }
+      }
+      var maiorFolhaFunc;
+      for (var folha in listaFolhasFuncionario) {
+        if (maiorFolhaFunc == null || folha['codFolha'] > maiorFolhaFunc['codFolha']) {
+          maiorFolhaFunc = folha;
+        }
+      }
+
+      salarioAtual = maiorFolhaFunc['salario'];
+      valorProventos = maiorFolhaFunc['valor_proventos'];
+      valorDesconto = maiorFolhaFunc['valor_descontos'];
+      valorLiquido = maiorFolhaFunc['valor_liquido'];
+      mensagem = maiorFolhaFunc['mensagem'];
+      faixaIrf = maiorFolhaFunc['faixa_irrf'];
+
+      print(maiorFolhaFunc?['codFolha']);
+    } catch (err) {
+      print(err);
+    }
+
+    setState(() {});
+  }
+
+  double retornaValorLiquido(Map<String, dynamic> funcionario) {
     double inss = funcionario['inss'];
     double salario = funcionario['salario'];
     double planoSaude = funcionario['plano_DE_SAUDE'];
@@ -21,23 +84,28 @@ class FolhaPag extends StatelessWidget {
     double descontoINSS = (salario * (inss / 100));
 
     return (salario - descontoINSS) - planoSaude + vr + vt + va;
-
   }
 
-  double retornaTotalDescontado(Map<String, dynamic> funcionario){
+  double retornaTotalDescontado(Map<String, dynamic> funcionario) {
     double inss = funcionario['inss'];
     double salario = funcionario['salario'];
 
-    return(salario * (inss / 100));
+    return (salario * (inss / 100));
+  }
 
-
+  void _onVoltarButtonPressed(BuildContext context) {
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic>? funcionarioInfos = funcionarioData;
-    double totalLiquido = funcionarioInfos != null ? retornaValorLiquido(funcionarioInfos) : 0.0;
-    double valorDescontado = funcionarioInfos != null ? retornaTotalDescontado(funcionarioInfos): 0.0;
+    funcionarioInfos = widget.funcionarioData;
+    double totalLiquido =
+        funcionarioInfos != null ? retornaValorLiquido(funcionarioInfos!) : 0.0;
+    double valorDescontado =
+        funcionarioInfos != null ? retornaTotalDescontado(funcionarioInfos!) : 0.0;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -169,12 +237,12 @@ class FolhaPag extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'R\$ ${funcionarioInfos?['salario']?.toStringAsFixed(2) ?? "0.00"}',
+                      'R\$ $salarioAtual', // Usando a variável de estado
                       style: const TextStyle(
-                        fontSize: 14,
+                        fontSize: 15,
                       ),
                     ),
-                    const SizedBox(height: 12.0),
+                    const SizedBox(height: 15.0),
                     const Text(
                       'Valor de Proventos:',
                       style: TextStyle(
@@ -183,12 +251,12 @@ class FolhaPag extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'R\$ ${(funcionarioInfos?['vale_refeicao'] + funcionarioInfos?['vale_alimentacao'] + funcionarioInfos?['vale_transporte'])?.toStringAsFixed(2) ?? "0.00"}',
+                      'R\$ $valorProventos',
                       style: const TextStyle(
                         fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 12.0),
+                    const SizedBox(height: 15.0),
                     const Text(
                       'Valor Descontos:',
                       style: TextStyle(
@@ -197,12 +265,12 @@ class FolhaPag extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'R\$ ${valorDescontado.toStringAsFixed(2)}',
+                      'R\$ $valorDesconto',
                       style: const TextStyle(
                         fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 12.0),
+                    const SizedBox(height: 15.0),
                     const Text(
                       'Valor Líquido:',
                       style: TextStyle(
@@ -211,12 +279,12 @@ class FolhaPag extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'R\$ ${totalLiquido.toStringAsFixed(2)}',
+                      'R\$ $valorLiquido',
                       style: const TextStyle(
                         fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 12.0),
+                    const SizedBox(height: 15.0),
 
                     const Text(
                       'Taxas: ',
@@ -227,13 +295,30 @@ class FolhaPag extends StatelessWidget {
                     ),
 
                     Text(
-                      'INSS: ${funcionarioInfos?['inss']?.toStringAsFixed(2) ?? "0.00"}%',
+                      'INSS: $faixaIrf',
                       style: const TextStyle(
                         fontSize: 14,
+                        height: 2,
                       ),
                     ),
 
-                    // Adicione informações adicionais aqui, se necessário
+                    const SizedBox(height: 15.0),
+
+                    const Text(
+                      'Mensagem:',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    Text(
+                      '$mensagem',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        height: 1.5,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -261,7 +346,7 @@ class FolhaPag extends StatelessWidget {
                         fontFamily: 'Quicksand',
                         fontSize: 18,
                       ),
-                    ), 
+                    ),
                   ),
                   // Adicione botões adicionais aqui, se necessário
                 ],

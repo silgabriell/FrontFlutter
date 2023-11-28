@@ -7,8 +7,6 @@ class MinhasInf extends StatefulWidget {
 
   const MinhasInf({Key? key, required this.funcionarioData}) : super(key: key);
 
-  
-
   @override
   _MinhasInfState createState() => _MinhasInfState();
 }
