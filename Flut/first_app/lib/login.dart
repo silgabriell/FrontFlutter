@@ -195,7 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                         padding: EdgeInsets.zero,
                       ),
                       child: const Text(
-                        'Esqueceu sua senha?',
+                        '',
                         style: TextStyle(
                           height: 1.25,
                           fontSize: 20,
