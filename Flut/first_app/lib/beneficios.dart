@@ -7,7 +7,7 @@ class Beneficio extends StatelessWidget {
   const Beneficio({Key? key, required this.funcionarioData}) : super(key: key);
 
   String proventos(Map<String, dynamic>? funcionarioData) {
-    return '${funcionarioData?['vale_refeicao']}/${funcionarioData?['vale_alimentacao']}/${funcionarioData?['vale_transporte']}/';
+    return '${funcionarioData?['vale_refeicao']}/${funcionarioData?['vale_alimentacao']}/${funcionarioData?['vale_transporte']}';
   }
 
   String formatarDataAniversario() {
